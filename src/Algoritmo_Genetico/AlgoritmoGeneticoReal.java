@@ -106,9 +106,7 @@ public class AlgoritmoGeneticoReal {
 			if (prob <= probDoCrossover) {
 				a = rand.nextDouble();
 				for (int j = 0; j < populationPosCrossover[0].length; j++) {
-					double delete = a * populacaoSelecionado[i * 2][j];
-					double delete2 = (1 - a) * populacaoSelecionado[i * 2 + 1][j];
-					populationPosCrossover[i * 2][j] = delete+delete2;
+					populationPosCrossover[i * 2][j] = a * populacaoSelecionado[i * 2][j]+(1 - a) * populacaoSelecionado[i * 2 + 1][j];
 					populationPosCrossover[i * 2 + 1][j] = (1 - a) * populacaoSelecionado[i * 2][j]
 							+ a * populacaoSelecionado[i * 2 + 1][j];
 				}
