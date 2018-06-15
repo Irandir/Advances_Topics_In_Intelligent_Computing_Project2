@@ -2,12 +2,6 @@ package Algoritmo_Genetico;
 
 public class Teste {
 	
-	//values are fitconal
-	public double[] date(){
-		double []dates = new double[9];
-		return dates;
-	}
-	
 	public static void main(String[] args) {
 		//configurations
 		//resolution, taxa de bits, fps, largura de banda
