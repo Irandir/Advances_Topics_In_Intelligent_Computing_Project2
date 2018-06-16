@@ -35,6 +35,9 @@ public class AlgoritmoGeneticoReal {
 		int ind = 0;
 		double aux = 0;
 		for (int i = 0; i < fitness.length; i++) {
+			indice = rand.nextInt(fitness.length);
+			aux = fitness[indice];
+			ind = indice;
 			for (int j = 0; j < lengthTournamentWindow; j++) {
 				indice = rand.nextInt(fitness.length);
 				if (aux < fitness[indice]) {
@@ -106,9 +109,8 @@ public class AlgoritmoGeneticoReal {
 			if (prob <= probDoCrossover) {
 				a = rand.nextDouble();
 				for (int j = 0; j < populationPosCrossover[0].length; j++) {
-					populationPosCrossover[i * 2][j] = a * populacaoSelecionado[i * 2][j]+(1 - a) * populacaoSelecionado[i * 2 + 1][j];
-					populationPosCrossover[i * 2 + 1][j] = (1 - a) * populacaoSelecionado[i * 2][j]
-							+ a * populacaoSelecionado[i * 2 + 1][j];
+					populationPosCrossover[i * 2][j] = a * populacaoSelecionado[i * 2][j] + (1 - a) * populacaoSelecionado[i * 2 + 1][j];
+					populationPosCrossover[i * 2 + 1][j] = (1 - a) * populacaoSelecionado[i * 2][j]+ a * populacaoSelecionado[i * 2 + 1][j];
 				}
 			} else {
 				for (int j = 0; j < populationPosCrossover[0].length; j++) {

@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 
 import org.math.plot.Plot2DPanel;
 
-public class Teste {
+public class Teste2 {
 	public static double normaliza(double dadoNormal, double min, double max) {
 		return (dadoNormal - min) / (max - min);
 	}
@@ -28,33 +28,34 @@ public class Teste {
 				{1920,1080, 60, 20}
 				
 		};
-		double[][] conf = new double[conf1.length][conf1[0].length];
-		for (int i = 0; i < conf.length; i++) {
-			for (int j = 0; j < conf[0].length; j++) {
-				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
+		double[][] configurations = new double[conf1.length][conf1[0].length];
+		for (int i = 0; i < configurations.length; i++) {
+			for (int j = 0; j < configurations[0].length; j++) {
+				configurations[i][j] = normaliza(conf1[i][j], 15, 1920);
 			}
 		}
+		
 		//ampere hora
-		double [] ampHour = {0.046,0.050,0.056,0.052,0.053,0.061,0.054,0.064,0.090};
+		double [] ampHour ={0.046,0.050,0.056,0.052,0.053,0.061,0.054,0.064,0.090};
 	
-		//function linear
+		//function expenencial
 		
 		AlgoritmoGeneticoReal ag = new AlgoritmoGeneticoReal();
 		int lengthPopulation = 20;
-		
 		double rmse = 0;//erro medio quadratico
+		double exp = 0;
 		double output = 0;//saida do modelo linear
 		double[] vectorRMSE = new double[lengthPopulation];//vetor dos erros medios quadraticos 
-		double[][] population = ag.createPopulation(lengthPopulation, conf[0].length, -1, 1);
+		double[][] population = ag.createPopulation(lengthPopulation, configurations[0].length+1, -1, 1);//+1 do k
 		double[][] populationCruzada;
 		double[][] populationMudata;
 		double[][] populationSelection;
 		double[][] populationEletismo;
 		double[] fitness = null;
 		double[] bestIndividual = null;
-		double bestIndFit[] = new double[2000];
+		double bestIndFit[] = new double[1000];
 
-		for (int contGerecao = 0; contGerecao < 2000; contGerecao++) {
+		for (int contGerecao = 0; contGerecao < 1000; contGerecao++) {
 			if (contGerecao > 0) {
 				populationSelection = ag.selection(fitness, population, 3);
 				populationCruzada = ag.crossoverAritmetico(populationSelection, 0.7);
@@ -67,9 +68,11 @@ public class Teste {
 				rmse = 0;
 				for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
 					output = 0;
-					for (int i = 0; i < conf[0].length; i++) {
-						output += population[contPopulation][i]* conf[contAmp][i]; 
+					exp = 0;
+					for (int i = 0; i < configurations[0].length; i++) {
+						exp += population[contPopulation][i]* configurations[contAmp][i]; 
 					}
+					output= population[contPopulation][population[0].length-1]*(Math.exp(exp));
 					rmse += Math.pow(ampHour[contAmp]-output,2);
 				}
 				rmse/= ampHour.length;
@@ -80,21 +83,25 @@ public class Teste {
 			bestIndFit[contGerecao] = ag.bestIndividualFit(fitness);
 		}	
 		for (int i = 0; i < bestIndFit.length; i++) {
-			System.out.println(i+" "+bestIndFit[i]);
+			System.out.println(bestIndFit[i]);
 		}
-		System.out.println("______________P___________");
+		System.out.println("______________Population___________");
 		for (int i = 0; i < bestIndividual.length; i++) {
 			System.out.println(bestIndividual[i]);
 		}
-		System.out.println("----------------REsposta-----------");
 		double vectorOutput[] = new double[ampHour.length];
+
+		System.out.println("----------------REsposta-----------");
 		for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
 			output = 0;
-			for (int i = 0; i < conf[0].length; i++) {
-				output += bestIndividual[i]* conf[contAmp][i]; 
+			exp = 0;
+			for (int i = 0; i < configurations[0].length; i++) {
+				exp += bestIndividual[i]* configurations[contAmp][i]; 
 			}
+			output= bestIndividual[bestIndividual.length-1]*(Math.exp(exp));
 			vectorOutput[contAmp] = output;
-			System.out.println(output);
+
+			System.out.println("output --> "+output+"  output D-->"+ampHour[contAmp]+" erro-->"+(output-ampHour[contAmp]));
 		}
 		Plot2DPanel plot = new Plot2DPanel();
 		double x[] = new double[ampHour.length];
@@ -104,7 +111,7 @@ public class Teste {
 		
 		plot.addLinePlot("A/H", x,ampHour);
 		plot.addLinePlot("A/H", x,vectorOutput);
-		JFrame frame = new JFrame("Output Linear");
+		JFrame frame = new JFrame("Output Exponencial");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(plot);
 		frame.setSize(700, 500);
