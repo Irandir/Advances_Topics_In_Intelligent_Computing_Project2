@@ -7,7 +7,7 @@ import org.math.plot.Plot2DPanel;
 public class Teste {
 	
 	private double[]bestIndividual;
-	private double[]bestIndFit = new double[1000];
+	private double[]bestIndFit = new double[2000];
 	private double vectorOutput[];
 	public static double normaliza(double dadoNormal, double min, double max) {
 		return (dadoNormal - min) / (max - min);
@@ -23,10 +23,29 @@ public class Teste {
 		// resolution, fps, taxa de bit,largura de banda
 		double[][] conf1 = {
 
-				{ 320, 240, 15, 20 }, { 320, 240, 30, 20 }, { 320, 240, 60, 20 }, { 720, 480, 15, 20 },
-				{ 720, 480, 30, 20 }, { 720, 480, 60, 20 }, { 1920, 1080, 15, 20 }, { 1920, 1080, 30, 20 },
-				{ 1920, 1080, 60, 20 }
-
+				{ 320, 240, 15, 256 }, 
+				{ 320, 240, 30, 256 }, 
+				{ 320, 240, 60, 256 },
+				
+				{ 320, 240, 15, 512}, 
+				{ 320, 240, 30, 512}, 
+				{ 320, 240, 60, 512},
+				
+				{ 720, 480, 15, 256},
+				{ 720, 480, 30, 256}, 
+				{ 720, 480, 60, 256}, 
+				
+				{ 720, 480, 15, 512 },
+				{ 720, 480, 30, 512 }, 
+				{ 720, 480, 60, 512 }, 
+				
+				{ 1920, 1080, 15, 256 }, 
+				{ 1920, 1080, 30, 256},
+				{ 1920, 1080, 60, 256},
+				
+				{ 1920, 1080, 15, 512 }, 
+				{ 1920, 1080, 30, 512 },
+				{ 1920, 1080, 60, 512 }
 		};
 		double[][] conf = new double[conf1.length][conf1[0].length];
 		for (int i = 0; i < conf.length; i++) {
@@ -34,16 +53,22 @@ public class Teste {
 				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
 			}
 		}
-		// ampere hora
-		double[] ampHour = { 0.046, 0.050, 0.056, 0.052, 0.053, 0.061, 0.054, 0.064, 0.090 };
+		// ampere hora 
+		double[]  ampHour = { 422, 446, 522, 158, 662, 368, 630, 276, 430, 528, 450, 410, 490,
+				452, 324, 648, 378, 416 };
+		double[]  ampHour2 = new double[ampHour.length];
+		for (int i = 0; i < ampHour2.length; i++) {
+			ampHour2[i]= normaliza(ampHour[i], 158, 662);
+		}
+		
 		Teste t = new Teste();
-		t.run(conf,ampHour);
+		t.run(conf,ampHour2);
 		double[]bestIndividual= t.bestIndividual;
 		System.out.println("----------------REsposta-----------");
 		for (int i = 0; i < t.vectorOutput.length; i++) {
-			System.out.println(t.vectorOutput[i]);
+			System.out.println(t.vectorOutput[i]+"  "+ampHour2[i]);
 		}
-		
+		System.out.println("---fitness--");
 		for (int i = 0; i < t.bestIndFit.length; i++) {
 			System.out.println(i + " " + t.bestIndFit[i]);
 		}
@@ -57,7 +82,7 @@ public class Teste {
 			x[i] = i + 1;
 		}
 
-		plot.addLinePlot("A/H", x, ampHour);
+		plot.addLinePlot("A/H", x, ampHour2);
 		plot.addLinePlot("A/H", x, t.vectorOutput);
 		JFrame frame = new JFrame("Output Linear");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
