@@ -8,7 +8,7 @@ import org.math.plot.Plot2DPanel;
 
 import Jama.Matrix;
 
-public class TesteMinimosQuadraticos {
+public class TesteMinimosQuadraticosLinear {
 
 	public static double[][] calcularMininoQuadratico(Matrix entradas, Matrix resposta) {
 		double[][] r = (resposta.times(entradas.transpose())).times((entradas.times(entradas.transpose())).inverse()).getArray();
@@ -47,15 +47,15 @@ public class TesteMinimosQuadraticos {
 			System.out.println();
 		}
 		System.out.println("__________________________");
-		double sum = 0;
+		double linear = 0;
 		double[] vectorOutput = new double[ampHour[0].length];
 		for (int i = 0; i < conf[0].length; i++) {
-			sum = 0;
+			linear = 0;
 			for (int j = 0; j < r[0].length; j++) {
-				sum+= conf[j][i] * r[0][j];
+				linear+= conf[j][i] * r[0][j];
 			}
-			System.out.println(sum);
-			vectorOutput[i] = sum;
+			System.out.println(linear);
+			vectorOutput[i] = linear;
 		}
 		Plot2DPanel plot = new Plot2DPanel();
 		double x[] = new double[ampHour[0].length];
@@ -68,7 +68,7 @@ public class TesteMinimosQuadraticos {
 		}
 		plot.addLinePlot("REAL", x,vectorOutputD);
 		plot.addLinePlot("Obtido", x,vectorOutput);
-		JFrame frame = new JFrame("Least Squares");
+		JFrame frame = new JFrame("Least Squares linear");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(plot);
 		frame.setSize(700, 500);
