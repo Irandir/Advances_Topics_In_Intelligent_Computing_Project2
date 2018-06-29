@@ -54,19 +54,14 @@ public class Teste {
 			}
 		}
 		// ampere hora 
-		double[]  ampHour = { 422, 446, 522, 158, 662, 368, 630, 276, 430, 528, 450, 410, 490,
-				452, 324, 648, 378, 416 };
-		double[]  ampHour2 = new double[ampHour.length];
-		for (int i = 0; i < ampHour2.length; i++) {
-			ampHour2[i]= normaliza(ampHour[i], 158, 662);
-		}
+		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490, 0.452, 0.324, 0.648, 0.378, 0.416 };
 		
 		Teste t = new Teste();
-		t.run(conf,ampHour2);
+		t.run(conf,ampHour);
 		double[]bestIndividual= t.bestIndividual;
 		System.out.println("----------------REsposta-----------");
 		for (int i = 0; i < t.vectorOutput.length; i++) {
-			System.out.println(t.vectorOutput[i]+"  "+ampHour2[i]);
+			System.out.println(t.vectorOutput[i]+"  "+ampHour[i]);
 		}
 		System.out.println("---fitness--");
 		for (int i = 0; i < t.bestIndFit.length; i++) {
@@ -82,7 +77,7 @@ public class Teste {
 			x[i] = i + 1;
 		}
 
-		plot.addLinePlot("A/H", x, ampHour2);
+		plot.addLinePlot("A/H", x, ampHour);
 		plot.addLinePlot("A/H", x, t.vectorOutput);
 		JFrame frame = new JFrame("Output Linear");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

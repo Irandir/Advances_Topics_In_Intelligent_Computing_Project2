@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="C:/Users/Irandir/git/Aprendizado-de-Maquina/jmathplot.jar"/>
 	<classpathentry kind="lib" path="C:/bibliotecas java/jfreechart-1.0.19/lib/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="C:/bibliotecas java/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/bibliotecas java/jama-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

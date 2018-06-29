@@ -48,32 +48,13 @@ public class Teste2 {
 				{ 1920, 1080, 60, 512 }
 		};
 		double[][] conf = new double[conf1.length][conf1[0].length];
-		int max = 0, min = 0;
 		for (int i = 0; i < conf.length; i++) {
 			for (int j = 0; j < conf[0].length; j++) {
-				if(j == 0){
-					max = 1920;
-					min = 320;
-				}else if(j == 1){
-					max = 1080;
-					min = 240;
-				}else if(j == 2){
-					max = 60;
-					min = 15;
-				}else if(j == 3){
-					max = 512;
-					min = 256;
-				}
-				conf[i][j] = normaliza(conf1[i][j], min, max);
+				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
 			}
 		}
 		// ampere hora
 		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490, 0.452, 0.324, 0.648, 0.378, 0.416 };
-		//output = { 422, 446, 522, 158, 662, 368, 630, 276, 430, 528, 450, 410, 490, 452, 324, 648, 378, 416 };
-		double[]  ampHour2 = new double[ampHour.length];
-		for (int i = 0; i < ampHour2.length; i++) {
-			ampHour2[i]= normaliza(ampHour[i], 0.158, 0.662);
-		}
 
 		Teste2 t = new Teste2();
 		t.run(conf, ampHour);
