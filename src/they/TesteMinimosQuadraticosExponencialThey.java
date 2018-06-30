@@ -1,4 +1,4 @@
-package Algoritmo_Genetico;
+package they;
 
 import java.awt.Color;
 
@@ -8,7 +8,7 @@ import org.math.plot.Plot2DPanel;
 
 import Jama.Matrix;
 
-public class TesteMinimosQuadraticosExponencial {
+public class TesteMinimosQuadraticosExponencialThey {
 
 	public static double[][] calcularMininoQuadratico(Matrix entradas, Matrix resposta) {
 		double[][] r = (resposta.times(entradas.transpose())).times((entradas.times(entradas.transpose())).inverse())
@@ -22,23 +22,21 @@ public class TesteMinimosQuadraticosExponencial {
 
 	public static void main(String[] args) {
 		// configurations
-		// resolution, fps, taxa de bit,largura de banda
+		// resolution, fps
 		double[][] conf1 = {
-				{ 320, 320, 320, 320, 320, 320, 720, 720, 720, 720, 720, 720, 1920, 1920, 1920, 1920, 1920, 1920 },
-				{ 240, 240, 240, 240, 240, 240, 480, 480, 480, 480, 480, 480, 1080, 1080, 1080, 1080, 1080, 1080 },
-				{ 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60 },
-				{ 256, 256, 256, 512, 512, 512, 256, 256, 256, 512, 512, 512, 256, 256, 256, 512, 512, 512 },
-				//{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+				{ 320, 320, 320, 720, 720, 720, 1920, 1920, 1920 }, 
+				{ 240, 240, 240, 480, 480, 480, 1080, 1080, 1080 },
+				{ 15, 30, 60, 15, 30, 60, 15, 30, 60 },
+
 		};
 		double[][] conf = new double[conf1.length][conf1[0].length];
 		for (int i = 0; i < conf.length; i++) {
 			for (int j = 0; j < conf[0].length; j++) {
-				conf[i][j] = normaliza(conf1[i][j], 0, 1920);
+				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
 			}
 		}
 		// ampere hora
-		double[][] ampHour = { { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410,
-				0.490, 0.452, 0.324, 0.648, 0.378, 0.416 } };
+		double[][] ampHour =  {{ 0.046, 0.050, 0.056, 0.052, 0.053, 0.061, 0.054, 0.064, 0.090 }};
 
 		Matrix matrixEntradas = new Matrix(conf);
 		Matrix matrixRespostas = new Matrix(ampHour);
@@ -47,27 +45,25 @@ public class TesteMinimosQuadraticosExponencial {
 			for (int j = 0; j < r[0].length; j++) {
 				System.out.print(r[i][j] + " ");
 			}
-			System.out.println();
+			
 		}
-		System.out.println("__________________________");
-		double exp = 0;
+
 		double output = 0;
 		double[][] aux = new double[1][ampHour[0].length];
 		for (int i = 0; i < conf[0].length; i++) {
-			exp = 0;
 			output = 0;
 			for (int j = 0; j < r[0].length; j++) {
-				exp += conf[j][i] * r[0][j];
+				output += conf[j][i] * r[0][j];
 			}
-			output = Math.pow(Math.E,exp);
-			System.out.println(output);
 			aux[0][i] = output;
 		}
 		Matrix matrixK = new Matrix(aux);
 		double[][] k = calcularMininoQuadratico(matrixK, matrixRespostas);
+		System.out.println(k[0][0]+"__________________________");
 		double[] vectorOutput = new double[ampHour[0].length];
 		for (int i = 0; i < aux[0].length; i++) {
-			vectorOutput[i] = k[0][0]*aux[0][i];
+			vectorOutput[i] = Math.log(k[0][0])+aux[0][i];
+			System.out.println(vectorOutput[i]);
 		}
 		
 		

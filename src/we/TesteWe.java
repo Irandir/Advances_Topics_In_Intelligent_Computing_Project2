@@ -1,13 +1,16 @@
-package Algoritmo_Genetico;
+package we;
 
 import javax.swing.JFrame;
 
 import org.math.plot.Plot2DPanel;
 
-public class Teste {
+import Algoritmo_Genetico.AlgoritmoGeneticoReal;
+
+public class TesteWe {
 	
 	private double[]bestIndividual;
-	private double[]bestIndFit = new double[2000];
+	private double[]bestIndFit;
+	private double rsme;
 	private double vectorOutput[];
 	public static double normaliza(double dadoNormal, double min, double max) {
 		return (dadoNormal - min) / (max - min);
@@ -56,8 +59,8 @@ public class Teste {
 		// ampere hora 
 		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490, 0.452, 0.324, 0.648, 0.378, 0.416 };
 		
-		Teste t = new Teste();
-		t.run(conf,ampHour);
+		TesteWe t = new TesteWe();
+		t.run(conf,ampHour,20,1000);
 		double[]bestIndividual= t.bestIndividual;
 		System.out.println("----------------REsposta-----------");
 		for (int i = 0; i < t.vectorOutput.length; i++) {
@@ -86,13 +89,12 @@ public class Teste {
 		frame.setVisible(true);
 	}
 
-	public void run(double[][] conf,double[] ampHour) {
+	public void run(double[][] conf,double[] ampHour,int lengthPopulation,int geracao) {
 		
 		// function linear
 		AlgoritmoGeneticoReal ag = new AlgoritmoGeneticoReal();
-		int lengthPopulation = 20;
 
-		double rmse = 0;// erro medio quadratico
+		double rsme = 0;// erro medio quadratico
 		double output = 0;// saida do modelo linear
 		double[] vectorRMSE = new double[lengthPopulation];// vetor dos erros
 															// medios
@@ -104,7 +106,8 @@ public class Teste {
 		double[][] populationEletismo;
 		double[] fitness = null;
 		vectorOutput = new double[ampHour.length];
-		for (int contGerecao = 0; contGerecao < bestIndFit.length; contGerecao++) {
+		bestIndFit = new double[geracao];
+		for (int contGerecao = 0; contGerecao < geracao; contGerecao++) {
 			if (contGerecao > 0) {
 				populationSelection = ag.selection(fitness, population, 3);
 				populationCruzada = ag.crossoverAritmetico(populationSelection, 0.7);
@@ -115,29 +118,39 @@ public class Teste {
 			}
 			vectorRMSE = new double[lengthPopulation];
 			for (int contPopulation = 0; contPopulation < population.length; contPopulation++) {
-				rmse = 0;
+				rsme = 0;
 				for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
 					output = 0;
 					for (int i = 0; i < conf[0].length; i++) {
 						output += population[contPopulation][i] * conf[contAmp][i];
 					}
-					rmse += Math.pow(ampHour[contAmp] - output, 2);
+					rsme += Math.pow(ampHour[contAmp] - output, 2);
 				}
-				rmse /= ampHour.length;
-				vectorRMSE[contPopulation] = rmse;
+				rsme /= ampHour.length;
+				vectorRMSE[contPopulation] = rsme;
 			}
 			fitness = ag.fitness(vectorRMSE);
 			bestIndividual = ag.bestIndividual(population, fitness);
 			bestIndFit[contGerecao] = ag.bestIndividualFit(fitness);
 		}
+		rsme = 0;
 		for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
 			output = 0;
 			for (int i = 0; i < conf[0].length; i++) {
 				output += bestIndividual[i] * conf[contAmp][i];
 			}
 			vectorOutput[contAmp] = output;
+			rsme += Math.pow(ampHour[contAmp] - output, 2);
 		}
+		this.rsme = rsme / ampHour.length;
+	}
 	
+	public double getRsme() {
+		return rsme;
+	}
+
+	public void setRsme(double rsme) {
+		this.rsme = rsme;
 	}
 
 	public double[] getBestIndividual() {

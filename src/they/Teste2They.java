@@ -1,13 +1,16 @@
-package Algoritmo_Genetico;
+package they;
 
 import javax.swing.JFrame;
 
 import org.math.plot.Plot2DPanel;
 
-public class Teste2 {
+import Algoritmo_Genetico.AlgoritmoGeneticoReal;
+
+public class Teste2They {
 	private double[] bestIndividual = null;
-	private double bestIndFit[] = new double[1000];
+	private double bestIndFit[];
 	private double vectorOutput[];
+	private double rsme=0;
 
 	public static double normaliza(double dadoNormal, double min, double max) {
 		return (dadoNormal - min) / (max - min);
@@ -22,30 +25,9 @@ public class Teste2 {
 		// configurations
 		// resolution, fps, taxa de bit,largura de banda
 		double[][] conf1 = {
-
-				{ 320, 240, 15, 256 }, 
-				{ 320, 240, 30, 256 }, 
-				{ 320, 240, 60, 256 },
-				
-				{ 320, 240, 15, 512}, 
-				{ 320, 240, 30, 512}, 
-				{ 320, 240, 60, 512},
-				
-				{ 720, 480, 15, 256},
-				{ 720, 480, 30, 256}, 
-				{ 720, 480, 60, 256}, 
-				
-				{ 720, 480, 15, 512 },
-				{ 720, 480, 30, 512 }, 
-				{ 720, 480, 60, 512 }, 
-				
-				{ 1920, 1080, 15, 256 }, 
-				{ 1920, 1080, 30, 256},
-				{ 1920, 1080, 60, 256},
-				
-				{ 1920, 1080, 15, 512 }, 
-				{ 1920, 1080, 30, 512 },
-				{ 1920, 1080, 60, 512 }
+				{ 320, 240, 15}, { 320, 240, 30}, { 320, 240, 60}, { 720, 480, 15},
+				{ 720, 480, 30}, { 720, 480, 60}, { 1920, 1080, 15}, { 1920, 1080, 30},
+				{ 1920, 1080, 60}
 		};
 		double[][] conf = new double[conf1.length][conf1[0].length];
 		for (int i = 0; i < conf.length; i++) {
@@ -54,10 +36,10 @@ public class Teste2 {
 			}
 		}
 		// ampere hora
-		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490, 0.452, 0.324, 0.648, 0.378, 0.416 };
+		double[] ampHour =  { 0.046, 0.050, 0.056, 0.052, 0.053, 0.061, 0.054, 0.064, 0.090 };
 
-		Teste2 t = new Teste2();
-		t.run(conf, ampHour);
+		Teste2They t = new Teste2They();
+		t.run(conf, ampHour,20,1000);
 		for (int i = 0; i < t.bestIndFit.length; i++) {
 			System.out.println(i+" "+t.bestIndFit[i]);
 		}
@@ -86,13 +68,12 @@ public class Teste2 {
 		frame.setVisible(true);
 	}
 	
-	public void run(double[][] conf,double[] ampHour) {
+	public void run(double[][] conf,double[] ampHour,int lengthPopulation,int geracao) {
 	
 		//function expenencial
 		
 		AlgoritmoGeneticoReal ag = new AlgoritmoGeneticoReal();
-		int lengthPopulation = 20;
-		double rmse = 0;//erro medio quadratico
+		double rsme = 0;//erro medio quadratico
 		double exp = 0;
 		double output = 0;//saida do modelo linear
 		double[] vectorRMSE = new double[lengthPopulation];//vetor dos erros medios quadraticos 
@@ -103,8 +84,9 @@ public class Teste2 {
 		double[][] populationEletismo;
 		double[] fitness = null;
 		vectorOutput = new double[ampHour.length];
+		bestIndFit = new double[geracao];
 
-		for (int contGerecao = 0; contGerecao < bestIndFit.length; contGerecao++) {
+		for (int contGerecao = 0; contGerecao < geracao; contGerecao++) {
 			if (contGerecao > 0) {
 				populationSelection = ag.selection(fitness, population, 4);
 				populationCruzada = ag.crossoverAritmetico(populationSelection, 0.7);
@@ -114,7 +96,7 @@ public class Teste2 {
 			}
 			vectorRMSE  = new double[lengthPopulation]; 
 			for (int contPopulation = 0; contPopulation < population.length; contPopulation++) {
-				rmse = 0;
+				rsme = 0;
 				for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
 					output = 0;
 					exp = 0;
@@ -122,15 +104,16 @@ public class Teste2 {
 						exp += population[contPopulation][i]* conf[contAmp][i]; 
 					}
 					output= population[contPopulation][population[0].length-1]*(Math.exp(exp));
-					rmse += Math.pow(ampHour[contAmp]-output,2);
+					rsme += Math.pow(ampHour[contAmp]-output,2);
 				}
-				rmse/= ampHour.length;
-				vectorRMSE[contPopulation] = rmse;
+				rsme/= ampHour.length;
+				vectorRMSE[contPopulation] = rsme;
 			}
 			fitness = ag.fitness(vectorRMSE);
 			bestIndividual = ag.bestIndividual(population, fitness);
 			bestIndFit[contGerecao] = ag.bestIndividualFit(fitness);
 		}	
+		rsme = 0;
 		for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
 			output = 0;
 			exp = 0;
@@ -138,9 +121,10 @@ public class Teste2 {
 				exp += bestIndividual[i]* conf[contAmp][i]; 
 			}
 			output= bestIndividual[bestIndividual.length-1]*(Math.exp(exp));
+			rsme += Math.pow(ampHour[contAmp] - output, 2);
 			vectorOutput[contAmp] = output;
 		}
-		
+		this.rsme = rsme / ampHour.length;
 	}
 
 	public double[] getBestIndividual() {
@@ -165,6 +149,14 @@ public class Teste2 {
 
 	public void setVectorOutput(double[] vectorOutput) {
 		this.vectorOutput = vectorOutput;
+	}
+
+	public double getRsme() {
+		return rsme;
+	}
+
+	public void setRsme(double rsme) {
+		this.rsme = rsme;
 	}
 	
 	
