@@ -216,9 +216,10 @@ public class Teste30We {
 		CategoryPlot plot = (CategoryPlot) grafico.getPlot();
 		CategoryItemRenderer itemRerender = plot.getRenderer();
 		//Caso vc queira mudar a cor das barras
-	/*	itemRerender.setSeriesPaint(0, Color.blue);
-		itemRerender.setSeriesPaint(1, Color.RED);
-		itemRerender.setSeriesPaint(2, Color.BLACK);*/
+		itemRerender.setSeriesPaint(0, Color.RED);
+		itemRerender.setSeriesPaint(1, Color.GREEN);
+		itemRerender.setSeriesPaint(2, Color.YELLOW);
+
 		JFrame frame = new JFrame();
 		frame.add(new ChartPanel(grafico));
 
