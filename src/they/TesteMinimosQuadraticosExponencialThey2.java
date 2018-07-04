@@ -12,23 +12,17 @@ import we.TesteMinimosQuadraticosExponencialWe;
 public class TesteMinimosQuadraticosExponencialThey2 {
 
 	private double[]p;
-	private double k;
 	private double rsme;
 	private double vectorOutput[];
 	
-	public void run(double[][] conf1,double[][] ampHour2){
-		double[][] conf = new double[conf1.length][conf1[0].length];
+	public void run(double[][] conf,double[][] ampHour2){
 		
 		double[][] ampHour = new double[ampHour2.length][ampHour2[0].length];
 		
 		for (int i = 0; i < ampHour[0].length; i++) {
 			ampHour[0][i] = Math.log(ampHour2[0][i]);
 		}
-		for (int i = 0; i < conf.length; i++) {
-			for (int j = 0; j < conf[0].length; j++) {
-				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
-			}
-		}
+		
 		int n = conf[0].length;
 		
 		double[] sumX = new double[conf.length+1];
@@ -90,16 +84,17 @@ public class TesteMinimosQuadraticosExponencialThey2 {
 			}
 		}
 		
-		k = Math.exp(r[0][0]);
+		p[0] = Math.exp(r[0][0]);
 		
 		double exp = 0;
+		double rsme = 0;
 		vectorOutput = new double[ampHour[0].length];
 		for (int i = 0; i < conf[0].length; i++) {
 			exp = 0;
 			for (int j = 0; j < conf.length; j++) {
 				exp += conf[j][i] * r[0][j+1];
 			}
-			vectorOutput[i] = k*Math.exp(exp);
+			vectorOutput[i] = p[0]*Math.exp(exp);
 			rsme += Math.pow(ampHour2[0][i] - vectorOutput[i], 2);
 		}
 		this.rsme = rsme / ampHour.length;
@@ -113,10 +108,17 @@ public class TesteMinimosQuadraticosExponencialThey2 {
 				{ 15, 30, 60, 15, 30, 60, 15, 30, 60 }
 
 		};
+		double[][] conf = new double[conf1.length][conf1[0].length];
+
+		for (int i = 0; i < conf.length; i++) {
+			for (int j = 0; j < conf[0].length; j++) {
+				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
+			}
+		}
 		double[][] ampHour2 =  {{ 0.046, 0.050, 0.056, 0.052, 0.053, 0.061, 0.054, 0.064, 0.090 }};
 		
 		TesteMinimosQuadraticosExponencialThey2 t = new TesteMinimosQuadraticosExponencialThey2();
-		t.run(conf1, ampHour2);
+		t.run(conf, ampHour2);
 		double[] vectorOutputD = new double[ampHour2[0].length];
 		for (int i = 0; i < ampHour2[0].length; i++) {
 			vectorOutputD[i] = ampHour2[0][i];
@@ -134,7 +136,6 @@ public class TesteMinimosQuadraticosExponencialThey2 {
 		frame.setContentPane(plot);
 		frame.setSize(700, 500);
 		frame.setVisible(true);
-		System.out.println(t.k);
 		System.out.println(t.rsme);
 		for (int i = 0; i < t.p.length; i++) {
 			System.out.println(t.p[i]);
@@ -151,158 +152,12 @@ public class TesteMinimosQuadraticosExponencialThey2 {
 		return (dadoNormal - min) / (max - min);
 	}	
 	
-	public static void main3(String[] args) {
-		// configurations
-		// resolution, fps
-		double[][] conf1 = {
-				//x1
-				{ 320, 320, 320, 720, 720, 720, 1920, 1920, 1920 }, 
-				//x2
-				{ 240, 240, 240, 480, 480, 480, 1080, 1080, 1080 },
-				//x3
-				{ 15, 30, 60, 15, 30, 60, 15, 30, 60 },
-
-		};
-		double[][] conf = new double[conf1.length][conf1[0].length];
-		double[][] ampHour2 =  {{ 0.046, 0.050, 0.056, 0.052, 0.053, 0.061, 0.054, 0.064, 0.090 }};
-
-
-		double[][] ampHour = new double[ampHour2.length][ampHour2[0].length];
-		
-		for (int i = 0; i < ampHour[0].length; i++) {
-			ampHour[0][i] = Math.log(ampHour2[0][i]);
-		}
-		for (int i = 0; i < conf.length; i++) {
-			for (int j = 0; j < conf[0].length; j++) {
-				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
-			}
-		}
-		int n = conf[0].length;
-		
-		double[] sumX = new double[conf.length+1];
-		for (int i = 0; i < conf.length; i++) {
-			for (int j = 0; j < conf[0].length; j++) {
-				sumX[i]+=conf[i][j];
-			}
-		}
-		for (int i = 0; i < ampHour[0].length; i++) {
-			sumX[sumX.length-1]+= ampHour[0][i];
-		}
-		
-		double matrix[][] = new double[conf.length+1][conf.length+2];
-		int aux = 0;
-		double s = 0;
-		for (int i = 0; i < matrix.length; i++) {
-			if(i == 0){
-				matrix[i][0]  = n;
-				for (int j = 0; j < sumX.length; j++) {
-					matrix[i][j+1] = sumX[j];
-				}
-			}else{
-				matrix[i][0]  = sumX[i-1];
-				for (int j = 0; j < matrix[0].length-2; j++) {
-					s = 0;
-					for (int j2 = 0; j2 < conf[0].length; j2++) {
-						s+= conf[j][j2]*conf[aux][j2];
-					}
-					matrix[i][j+1] = s;
-				}
-				s = 0;
-				for (int j2 = 0; j2 < conf[0].length; j2++) {
-					s+= ampHour[0][j2]*conf[aux][j2];
-				}
-				matrix[i][matrix[0].length-1]  = s;
-				aux++;
-			}
-			
-		}
-		for (int i = 0; i < matrix.length; i++) {
-			for (int j = 0; j < matrix[0].length; j++) {
-				System.out.print(matrix[i][j]+" ");
-			}
-			System.out.println();
-		}
-		System.out.println("________________MQ______________");
-		
-		// mininmos quadraticos ativar
-		double [][]entrada = new double[matrix.length][matrix[0].length-1];
-		double saida[][] = new double[1][matrix.length];
-		
-		for (int i = 0; i < entrada.length; i++) {
-			for (int j = 0; j < entrada[0].length; j++) {
-				entrada[i][j] = matrix[j][i];
-			}
-			saida[0][i] = matrix[i][matrix[0].length-1];
-		}
-		
-		
-		for (int i = 0; i < entrada.length; i++) {
-			for (int j = 0; j < entrada[0].length; j++) {
-				System.out.print(entrada[i][j]+" ");
-			}
-			System.out.println(" y --> "+saida[0][i]);
-		}
-		Matrix matrixEntradas = new Matrix(entrada);
-		Matrix matrixRespostas = new Matrix(saida);
-		double r[][] = calcularMininoQuadratico(matrixEntradas, matrixRespostas);
-		System.out.println("-----ps------");
-		for (int i = 0; i < r.length; i++) {
-			for (int j = 0; j < r[0].length; j++) {
-				System.out.println(r[i][j]);
-			}
-		}
-		System.out.println("exp b -- >"+Math.exp(r[0][0]));
-		
-		double k = Math.exp(r[0][0]);
-		
-		double exp = 0;
-		double output =0;
-		double vectorOutput[] = new double[ampHour[0].length];
-		for (int i = 0; i < conf[0].length; i++) {
-			exp = 0;
-			for (int j = 0; j < conf.length; j++) {
-				exp += conf[j][i] * r[0][j+1];
-			}
-			 vectorOutput[i] = k*Math.exp(exp);
-		}
-		System.out.println("-------------------saidas O-----------");
-		for (int i = 0; i < vectorOutput.length; i++) {
-			System.out.println(vectorOutput[i]);
-		}
-		
-		double[] vectorOutputD = new double[ampHour[0].length];
-		for (int i = 0; i < ampHour2[0].length; i++) {
-			vectorOutputD[i] = ampHour2[0][i];
-		}
-		
-		Plot2DPanel plot = new Plot2DPanel();
-		double x[] = new double[ampHour2[0].length];
-		for (int i = 0; i < x.length; i++) {
-			x[i] = i + 1;
-		}
-		plot.addLinePlot("REAL", x, vectorOutputD);
-		plot.addLinePlot("Obtido", x, vectorOutput);
-		JFrame frame = new JFrame("Least Squares Exponencial");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(plot);
-		frame.setSize(700, 500);
-		frame.setVisible(true);
-	}
-
 	public double[] getP() {
 		return p;
 	}
 
 	public void setP(double[] p) {
 		this.p = p;
-	}
-
-	public double getK() {
-		return k;
-	}
-
-	public void setK(double k) {
-		this.k = k;
 	}
 
 	public double getRsme() {
