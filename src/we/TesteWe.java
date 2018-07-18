@@ -7,11 +7,12 @@ import org.math.plot.Plot2DPanel;
 import Algoritmo_Genetico.AlgoritmoGeneticoReal;
 
 public class TesteWe {
-	
-	private double[]bestIndividual;
-	private double[]bestIndFit;
+
+	private double[] bestIndividual;
+	private double[] bestIndFit;
 	private double rsme;
 	private double vectorOutput[];
+
 	public static double normaliza(double dadoNormal, double min, double max) {
 		return (dadoNormal - min) / (max - min);
 	}
@@ -21,50 +22,38 @@ public class TesteWe {
 	}
 
 	public static void main(String[] args) {
-		
+
 		// configurations
 		// resolution, fps, taxa de bit,largura de banda
 		double[][] conf1 = {
 
-				{ 320, 240, 15, 256 }, 
-				{ 320, 240, 30, 256 }, 
-				{ 320, 240, 60, 256 },
-				
-				{ 320, 240, 15, 512}, 
-				{ 320, 240, 30, 512}, 
-				{ 320, 240, 60, 512},
-				
-				{ 720, 480, 15, 256},
-				{ 720, 480, 30, 256}, 
-				{ 720, 480, 60, 256}, 
-				
-				{ 720, 480, 15, 512 },
-				{ 720, 480, 30, 512 }, 
-				{ 720, 480, 60, 512 }, 
-				
-				{ 1920, 1080, 15, 256 }, 
-				{ 1920, 1080, 30, 256},
-				{ 1920, 1080, 60, 256},
-				
-				{ 1920, 1080, 15, 512 }, 
-				{ 1920, 1080, 30, 512 },
-				{ 1920, 1080, 60, 512 }
-		};
+				{ 320, 240, 15, 256 }, { 320, 240, 30, 256 }, { 320, 240, 60, 256 },
+
+				{ 320, 240, 15, 512 }, { 320, 240, 30, 512 }, { 320, 240, 60, 512 },
+
+				{ 720, 480, 15, 256 }, { 720, 480, 30, 256 }, { 720, 480, 60, 256 },
+
+				{ 720, 480, 15, 512 }, { 720, 480, 30, 512 }, { 720, 480, 60, 512 },
+
+				{ 1920, 1080, 15, 256 }, { 1920, 1080, 30, 256 }, { 1920, 1080, 60, 256 },
+
+				{ 1920, 1080, 15, 512 }, { 1920, 1080, 30, 512 }, { 1920, 1080, 60, 512 } };
 		double[][] conf = new double[conf1.length][conf1[0].length];
 		for (int i = 0; i < conf.length; i++) {
 			for (int j = 0; j < conf[0].length; j++) {
 				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
 			}
 		}
-		// ampere hora 
-		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490, 0.452, 0.324, 0.648, 0.378, 0.416 };
-		
+		// ampere hora
+		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490,
+				0.452, 0.324, 0.648, 0.378, 0.416 };
+
 		TesteWe t = new TesteWe();
-		t.run(conf,ampHour,20,1000);
-		double[]bestIndividual= t.bestIndividual;
+		t.run(conf, ampHour, 20, 1000);
+		double[] bestIndividual = t.bestIndividual;
 		System.out.println("----------------REsposta-----------");
 		for (int i = 0; i < t.vectorOutput.length; i++) {
-			System.out.println(t.vectorOutput[i]+"  "+ampHour[i]);
+			System.out.println(t.vectorOutput[i] + "  " + ampHour[i]);
 		}
 		System.out.println("---fitness--");
 		for (int i = 0; i < t.bestIndFit.length; i++) {
@@ -74,6 +63,7 @@ public class TesteWe {
 		for (int i = 0; i < bestIndividual.length; i++) {
 			System.out.println(bestIndividual[i]);
 		}
+		System.out.println("pcc-->" + t.pcc(t.vectorOutput,ampHour));
 		Plot2DPanel plot = new Plot2DPanel();
 		double x[] = new double[ampHour.length];
 		for (int i = 0; i < x.length; i++) {
@@ -89,8 +79,8 @@ public class TesteWe {
 		frame.setVisible(true);
 	}
 
-	public void run(double[][] conf,double[] ampHour,int lengthPopulation,int geracao) {
-		
+	public void run(double[][] conf, double[] ampHour, int lengthPopulation, int geracao) {
+
 		// function linear
 		AlgoritmoGeneticoReal ag = new AlgoritmoGeneticoReal();
 
@@ -134,17 +124,20 @@ public class TesteWe {
 			bestIndFit[contGerecao] = ag.bestIndividualFit(fitness);
 		}
 		rsme = 0;
+
 		for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
 			output = 0;
 			for (int i = 0; i < conf[0].length; i++) {
 				output += bestIndividual[i] * conf[contAmp][i];
 			}
 			vectorOutput[contAmp] = output;
+
 			rsme += Math.pow(ampHour[contAmp] - output, 2);
 		}
 		this.rsme = rsme / ampHour.length;
+
 	}
-	
+
 	public double getRsme() {
 		return rsme;
 	}
@@ -176,5 +169,34 @@ public class TesteWe {
 	public void setVectorOutput(double[] vectorOutput) {
 		this.vectorOutput = vectorOutput;
 	}
-	
+
+
+	public double mean(double[] vector) {
+		double mean = 0;
+		for (int i = 0; i < vector.length; i++) {
+			mean += vector[i];
+		}
+		mean /= vector.length;
+		return mean;
+	}
+
+	public double pcc(double vectorOutput[],double ampHour[]) {
+		// pcc
+		double xbarra = mean(vectorOutput);
+		double ybarra = mean(ampHour);
+		double numerador1 = 0;
+		double numerador2 = 0;
+		double denominador1 = 0;
+		double denominador2 = 0;
+		for (int i = 0; i < ampHour.length; i++) {
+			numerador1 += (vectorOutput[i] - xbarra);
+			numerador2 += (ampHour[i] - ybarra);
+			denominador1 += Math.pow((vectorOutput[i] - xbarra), 2);
+			denominador2 += Math.pow((ampHour[i] - ybarra), 2);
+		}
+		denominador1 = Math.sqrt(denominador1);
+		denominador2 = Math.sqrt(denominador2);
+		double r = (numerador1 * numerador2) / (denominador1 * denominador2);
+		return r;
+	}
 }

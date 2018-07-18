@@ -83,25 +83,28 @@ public class Teste30We {
 		double[] ampHour = {  0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410,0.490, 0.452, 0.324, 0.648, 0.378, 0.416 } ;
 		double[][] ampHour2 = { { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410,0.490, 0.452, 0.324, 0.648, 0.378, 0.416 } };
 		
-		// teste 1
+		// AG Linear (teste 1)
 		double meanBestIndividual[] = new double[input[0].length];
 		double meanBestIndFit = 0;
 		double meanOutput[] = new double[input.length];
 		double rsme = 0;
-		// teste 2
+		double pcc = 0;
+		// AG Expoencial (teste 2)
 		double meanBestIndividual2[] = new double[input[0].length + 1];
 		double meanBestIndFit2 = 0;
 		double meanOutput2[] = new double[input.length];
 		double rsme2 = 0;
+		double pcc2 = 0;
 		//minimos quadraticos
 		double meanP[] = new double[input[0].length];
 		double meanOutput3[] = new double[ampHour2[0].length];
 		double rsme3 = 0;
+		double pcc3 = 0;
 		// minimos quadraticos exp
-		double meanP2[] = new double[input[0].length];
+		double meanP2[] = new double[input[0].length+1];
 		double meanOutput4[] = new double[ampHour2[0].length];
 		double rsme4 = 0;
-				
+		double pcc4 = 0;		
 		TesteWe teste = new TesteWe();
 		Teste2We teste2 = new Teste2We();
 		TesteMinimosQuadraticosLinearWe teste3 = new TesteMinimosQuadraticosLinearWe();
@@ -119,6 +122,7 @@ public class Teste30We {
 				meanBestIndividual[j] += teste.getBestIndividual()[j];
 			}
 			rsme+=teste.getRsme();
+			pcc += pcc(teste.getVectorOutput(), ampHour);
 			
 			// teste 2
 			teste2 = new Teste2We();
@@ -131,7 +135,9 @@ public class Teste30We {
 				meanBestIndividual2[j] += teste2.getBestIndividual()[j];
 			}
 			rsme2+=teste2.getRsme();
+			pcc2 += pcc(teste2.getVectorOutput(), ampHour);
 			
+			//teste 3
 			teste3 = new TesteMinimosQuadraticosLinearWe();
 			teste3.run(input2, ampHour2);
 			for (int j = 0; j < meanOutput3.length; j++) {
@@ -141,7 +147,9 @@ public class Teste30We {
 				meanP[j] += teste3.getP()[j];
 			}
 			rsme3+=teste3.getRsme();
+			pcc3 += pcc(teste3.getVectorOutput(), ampHour2[0]);
 			
+			//teste 4
 			teste4 = new TesteMinimosQuadraticosExponencialWe();
 			teste4.run(input2, ampHour2);
 			for (int j = 0; j < meanOutput4.length; j++) {
@@ -151,8 +159,8 @@ public class Teste30We {
 				meanP2[j] += teste4.getP()[j];
 			}
 			rsme4+=teste4.getRsme();
+			pcc4 += pcc(teste4.getVectorOutput(), ampHour2[0]);
 		}
-		//divisão por 30
 		//divisão por 30
 		for (int i = 0; i < meanOutput.length; i++) {
 			meanOutput[i] = meanOutput[i] / 30;
@@ -185,6 +193,10 @@ public class Teste30We {
 		rsme2/=30;
 		rsme3/=30;
 		rsme4/=30;
+		pcc/=30;
+		pcc2/=30;
+		pcc3/=30;
+		pcc4/=30;
 		
 		//prints
 		System.out.println("Fitness do melhor individuo");
@@ -195,7 +207,7 @@ public class Teste30We {
 		for (int i = 0; i < meanBestIndividual.length; i++) {
 			System.out.println(meanBestIndividual[i]+"  "+meanBestIndividual2[i]+" "+meanP[i]+"  "+meanP2[i]);
 		}
-		System.out.println("------------------- "+meanBestIndividual2[meanBestIndividual2.length-1]+"---------------\n");
+		System.out.println("					"+meanBestIndividual2[meanBestIndividual2.length-1]+"					"+meanP2[meanP2.length-1]+"\n");
 		
 		System.out.println("AG linear rsme -->"+rsme);
 		System.out.println("AG linear exp -->"+rsme2);
@@ -214,7 +226,17 @@ public class Teste30We {
 		names[1] = "AG Exponencial";
 		names[2] = "LS Linear";
 		names[3] = "LS Exp";
-		plot2(values,names);
+		plot2(values,names,"Erro Medio Quadrático");
+		double pccs[] = new double[4];
+		pccs[0] = pcc;
+		pccs[1] = pcc2;
+		pccs[2] = pcc3;
+		pccs[3] = pcc4;
+		System.out.println("_________Pcc___________");
+		for (int i = 0; i < pccs.length; i++) {
+			System.out.println(names[i]+" --> "+pccs[i]);
+		}
+		plot2(pccs,names,"PCC");
 	}
 	
 	public static void plot(double[] ampHour,double []meanOutput,double []meanOutput2,double []meanOutput3,double []meanOutput4){
@@ -237,13 +259,13 @@ public class Teste30We {
 		frame.setVisible(true);
 	}
 	
-	public static void plot2(double[] value,String[] name){
+	public static void plot2(double[] value,String[] name,String titulo){
 		DefaultCategoryDataset dados = new DefaultCategoryDataset();
 		for (int i = 0; i < value.length; i++) {
 			dados.addValue(value[i],name[i],"");
 		}
 
-		JFreeChart grafico = ChartFactory.createBarChart("", "metodo", "Saída", dados, PlotOrientation.VERTICAL,
+		JFreeChart grafico = ChartFactory.createBarChart(titulo, "metodo", "Saída", dados, PlotOrientation.VERTICAL,
 				true, true, true);
 		CategoryPlot plot = (CategoryPlot) grafico.getPlot();
 		CategoryItemRenderer itemRerender = plot.getRenderer();
@@ -259,4 +281,33 @@ public class Teste30We {
 		frame.pack();
 		frame.setVisible(true);
 	}
+	public static double mean(double[] vector) {
+		double mean = 0;
+		for (int i = 0; i < vector.length; i++) {
+			mean += vector[i];
+		}
+		mean /= vector.length;
+		return mean;
+	}
+	
+	// pcc
+	public static double pcc(double vectorOutput[],double ampHour[]) {	
+		double xbarra = mean(vectorOutput);
+		double ybarra = mean(ampHour);
+		double numerador1 = 0;
+		double numerador2 = 0;
+		double denominador1 = 0;
+		double denominador2 = 0;
+		for (int i = 0; i < ampHour.length; i++) {
+			numerador1 += (vectorOutput[i] - xbarra);
+			numerador2 += (ampHour[i] - ybarra);
+			denominador1 += Math.pow((vectorOutput[i] - xbarra), 2);
+			denominador2 += Math.pow((ampHour[i] - ybarra), 2);
+		}
+		denominador1 = Math.sqrt(denominador1);
+		denominador2 = Math.sqrt(denominador2);
+		double r = (numerador1 * numerador2) / (denominador1 * denominador2);
+		return r;
+	}
+	
 }
