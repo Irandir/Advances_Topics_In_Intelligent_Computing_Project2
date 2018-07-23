@@ -258,7 +258,7 @@ public class Teste30They {
 		}
 		plot2(pccs, names, "PCC");
 
-		// boottrap
+		// bootstrap
 		System.out.println("______________________");
 		List<Double> meanT = new ArrayList<>();
 		List<Double> meanT2 = new ArrayList<>();
