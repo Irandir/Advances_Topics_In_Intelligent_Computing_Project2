@@ -96,7 +96,7 @@ public class Teste30They {
 		for (int i = 0; i < 30; i++) {
 			// teste 1
 			teste = new TesteThey();
-			teste.run(input, ampHour, 20, 1000);
+			teste.run(input, ampHour, 20, 200);
 			for (int j = 0; j < meanOutput.length; j++) {
 				meanOutput[j] += teste.getVectorOutput()[j];
 			}
@@ -110,7 +110,7 @@ public class Teste30They {
 
 			// teste 2
 			teste2 = new Teste2They();
-			teste2.run(input, ampHour, 20, 1000);
+			teste2.run(input, ampHour, 20, 200);
 			for (int j = 0; j < meanOutput2.length; j++) {
 				meanOutput2[j] += teste2.getVectorOutput()[j];
 			}
@@ -213,27 +213,38 @@ public class Teste30They {
 		System.out.println("_________Saidas_______");
 		System.out.print("Real --> ");
 		for (int i = 0; i < ampHour.length; i++) {
-			System.out.print(ampHour[i] + ", ");
+			String a = ampHour[i] + " ";
+			a = a.replace(".", ",");
+			System.out.println(a);
 		}
 		System.out.print("\nAG Linear --> ");
 		for (int i = 0; i < ampHour.length; i++) {
-			System.out.print(meanOutput[i] + ", ");
+			String a = meanOutput[i] + " ";
+			a = a.replace(".", ",");
+			System.out.println(a);
 		}
 		System.out.print("\nAG Exp --> ");
 		for (int i = 0; i < ampHour.length; i++) {
-			System.out.print(meanOutput2[i] + ", ");
+			String a = meanOutput2[i] + " ";
+			a = a.replace(".", ",");
+			System.out.println(a);
 		}
 		System.out.print("\nMQ Linear --> ");
 		for (int i = 0; i < ampHour.length; i++) {
-			System.out.print(meanOutput3[i] + ", ");
+			String a = meanOutput3[i] + " ";
+			a = a.replace(".", ",");
+			System.out.println(a);
 		}
 		System.out.print("\nMQ Exp --> ");
 		for (int i = 0; i < ampHour.length; i++) {
-			System.out.print(meanOutput4[i] + ", ");
+			String a = meanOutput4[i] + " ";
+			a = a.replace(".", ",");
+			System.out.println(a);
 		}
 
 		// plot
 		plot(ampHour, meanOutput, meanOutput2, meanOutput3, meanOutput4);
+		
 		// plot 2
 		double values[] = new double[4];
 		String names[] = new String[4];
@@ -302,7 +313,10 @@ public class Teste30They {
 		System.out.println("____________Teste 2______________");
 		System.out.println("nq1-->" + q1 + "   mean-->" + meanT2.get(q1));
 		System.out.println("q2-->" + q2 + "   mean-->" + meanT2.get(q2));
-
+		System.out.println("________R________");
+		for (int i = 0; i < pccs.length; i++) {
+			
+		}
 	}
 
 	public static void plot(double[] ampHour, double[] meanOutput, double[] meanOutput2, double[] meanOutput3,

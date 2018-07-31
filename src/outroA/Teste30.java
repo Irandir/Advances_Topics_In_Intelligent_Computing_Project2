@@ -1,4 +1,4 @@
-package we;
+package outroA;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -18,64 +18,40 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.math.plot.Plot2DPanel;
 
-public class Teste30We {
+public class Teste30 {
 
 	static Random rand = new Random();
-
+	static double values[][] = new double[4][4];
 	public double[][] input() {
-		TesteWe t = new TesteWe();
-		double[][] conf1 = {
-
-				{ 320, 240, 15, 256 }, { 320, 240, 30, 256 }, { 320, 240, 60, 256 },
-
-				{ 320, 240, 15, 512 }, { 320, 240, 30, 512 }, { 320, 240, 60, 512 },
-
-				{ 720, 480, 15, 256 }, { 720, 480, 30, 256 }, { 720, 480, 60, 256 },
-
-				{ 720, 480, 15, 512 }, { 720, 480, 30, 512 }, { 720, 480, 60, 512 },
-
-				{ 1920, 1080, 15, 256 }, { 1920, 1080, 30, 256 }, { 1920, 1080, 60, 256 },
-
-				{ 1920, 1080, 15, 512 }, { 1920, 1080, 30, 512 }, { 1920, 1080, 60, 512 }
-
-		};
+		AG_Linear t = new AG_Linear();
+		double[][] conf1 = { { 640,360, 30}, { 640,360, 60}, { 640, 360,30}, { 640,360, 60}, { 1280,720, 30},
+				{ 1280, 720,60} };
 		double[][] conf = new double[conf1.length][conf1[0].length];
+		
 		for (int i = 0; i < conf.length; i++) {
 			for (int j = 0; j < conf[0].length; j++) {
-				conf[i][j] = t.normaliza(conf1[i][j], 15, 1920);
+				conf[i][j] = t.normaliza(conf1[i][j], 30, 1280);
 			}
 		}
 		return conf;
 	}
 
 	public double[][] input2() {
-		TesteWe t = new TesteWe();
-		double[][] conf1 = {
-				{ 320, 320, 320, 320, 320, 320, 720, 720, 720, 720, 720, 720, 1920, 1920, 1920, 1920, 1920, 1920 },
-				{ 240, 240, 240, 240, 240, 240, 480, 480, 480, 480, 480, 480, 1080, 1080, 1080, 1080, 1080, 1080 },
-				{ 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60 },
-				{ 256, 256, 256, 512, 512, 512, 256, 256, 256, 512, 512, 512, 256, 256, 256, 512, 512, 512 },
+		AG_Linear t = new AG_Linear();
+		double[][] conf1 = { { 640, 640, 640, 640, 1280, 1280 }, { 360, 360, 360, 360, 720, 720 },
+				{ 30, 60, 30, 60, 30, 60 }
 
 		};
 		double[][] conf = new double[conf1.length][conf1[0].length];
 		for (int i = 0; i < conf.length; i++) {
 			for (int j = 0; j < conf[0].length; j++) {
-				conf[i][j] = t.normaliza(conf1[i][j], 15, 1920);
+				conf[i][j] = t.normaliza(conf1[i][j], 30, 1280 );
 			}
 		}
 		return conf;
 	}
 
-	public static void main(String[] args) {
-		Teste30We teste30 = new Teste30We();
-
-		double[][] input = teste30.input();
-		double[][] input2 = teste30.input2();
-		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490,
-				0.452, 0.324, 0.648, 0.378, 0.416 };
-		double[][] ampHour2 = { { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410,
-				0.490, 0.452, 0.324, 0.648, 0.378, 0.416 } };
-
+	public void all(double[][] input, double[][] input2, double[] ampHour, double[][] ampHour2,String nome,String nome2,int met) {
 		// AG Linear (teste 1)
 		double meanBestIndividual[] = new double[input[0].length];
 		double meanBestIndFit = 0;
@@ -101,14 +77,14 @@ public class Teste30We {
 		double meanOutput4[] = new double[ampHour2[0].length];
 		double rsme4 = 0;
 		double pcc4 = 0;
-		TesteWe teste = new TesteWe();
-		Teste2We teste2 = new Teste2We();
-		TesteMinimosQuadraticosLinearWe teste3 = new TesteMinimosQuadraticosLinearWe();
-		TesteMinimosQuadraticosExponencialWe teste4 = new TesteMinimosQuadraticosExponencialWe();
+		AG_Linear teste = new AG_Linear();
+		AG_EXP teste2 = new AG_EXP();
+		MQLinear teste3 = new MQLinear();
+		MQ_EXP teste4 = new MQ_EXP();
 
 		for (int i = 0; i < 30; i++) {
 			// teste 1
-			teste = new TesteWe();
+			teste = new AG_Linear();
 			teste.run(input, ampHour, 20, 200);
 			for (int j = 0; j < meanOutput.length; j++) {
 				meanOutput[j] += teste.getVectorOutput()[j];
@@ -122,7 +98,7 @@ public class Teste30We {
 			pcc += pcc(teste.getVectorOutput(), ampHour);
 
 			// teste 2
-			teste2 = new Teste2We();
+			teste2 = new AG_EXP();
 			teste2.run(input, ampHour, 20, 200);
 			for (int j = 0; j < meanOutput2.length; j++) {
 				meanOutput2[j] += teste2.getVectorOutput()[j];
@@ -136,7 +112,7 @@ public class Teste30We {
 			pcc2 += pcc(teste2.getVectorOutput(), ampHour);
 
 			// teste 3
-			teste3 = new TesteMinimosQuadraticosLinearWe();
+			teste3 = new MQLinear();
 			teste3.run(input2, ampHour2);
 			for (int j = 0; j < meanOutput3.length; j++) {
 				meanOutput3[j] += teste3.getVectorOutput()[j];
@@ -148,7 +124,7 @@ public class Teste30We {
 			pcc3 += pcc(teste3.getVectorOutput(), ampHour2[0]);
 
 			// teste 4
-			teste4 = new TesteMinimosQuadraticosExponencialWe();
+			teste4 = new MQ_EXP();
 			teste4.run(input2, ampHour2);
 			for (int j = 0; j < meanOutput4.length; j++) {
 				meanOutput4[j] += teste4.getVectorOutput()[j];
@@ -214,20 +190,17 @@ public class Teste30We {
 		System.out.println("Mínino Quadrático linear -->" + rsme3);
 		System.out.println("Mínino Quadrático Exp -->" + rsme4);
 		// plot
-		plot(ampHour, meanOutput, meanOutput2, meanOutput3, meanOutput4);
+		plot(ampHour, meanOutput, meanOutput2, meanOutput3, meanOutput4,nome);
 		// plot 2
-		double values[] = new double[4];
-		String names[] = new String[4];
-		values[0] = rsme;
-		values[1] = rsme2;
-		values[2] = rsme3;
-		values[3] = rsme4;
-		names[0] = "AG Linear";
-		names[1] = "AG Exponencial";
-		names[2] = "LS Linear";
-		names[3] = "LS Exp";
-		plot2(values, names, "Erro Medio Quadrático");
-		double pccs[] = new double[4];
+		
+		
+		values[met][0] = rsme;
+		values[met][1] = rsme2;
+		values[met][2] = rsme3;
+		values[met][3] = rsme4;
+		
+		
+		/*double pccs[] = new double[4];
 		pccs[0] = pcc;
 		pccs[1] = pcc2;
 		pccs[2] = pcc3;
@@ -236,8 +209,8 @@ public class Teste30We {
 		for (int i = 0; i < pccs.length; i++) {
 			System.out.println(names[i] + " --> " + pccs[i]);
 		}
-		plot2(pccs, names, "PCC");
-
+		//plot2(pccs, names, "PCC");*/
+		
 		// boottrap
 		System.out.println("______________________");
 		List<Double> meanT = new ArrayList<>();
@@ -267,28 +240,104 @@ public class Teste30We {
 			mean /= vectorRSME[1].length;
 			meanT2.add(mean);
 		}
-		
-		//ordenado
+
+		// ordenado
 		Collections.sort(meanT);
 		Collections.sort(meanT2);
-		
-		//intervalo de confianca
+
+		// intervalo de confianca
 		double a = 0.1;
-		int q1 = (int)(b*a/2);
-		int q2 = b-q1+1;
+		int q1 = (int) (b * a / 2);
+		int q2 = b - q1 + 1;
 		System.out.println("\n____________Teste ______________");
-		System.out.println("q1-->"+q1+"   mean-->"+meanT.get(q1));
-		System.out.println("q2-->"+q2+"   mean-->"+meanT.get(q2));
+		System.out.println("q1-->" + q1 + "   mean-->" + meanT.get(q1));
+		System.out.println("q2-->" + q2 + "   mean-->" + meanT.get(q2));
 		System.out.println("____________Teste 2______________");
-		System.out.println("nq1-->"+q1+"   mean-->"+meanT2.get(q1));
-		System.out.println("q2-->"+q2+"   mean-->"+meanT2.get(q2));
+		System.out.println("nq1-->" + q1 + "   mean-->" + meanT2.get(q1));
+		System.out.println("q2-->" + q2 + "   mean-->" + meanT2.get(q2));
+	}
+
+	public static void main(String[] args) {
+		Teste30 teste30 = new Teste30();
+		AG_Linear t = new AG_Linear();
+		double[][] input = teste30.input();
+		double[][] input2 = teste30.input2();
+
+		//music
+		double[] music = { 594.9, 698.1, 682.9, 783.7,786.4, 975.8};
+		double[][] music2 = {{ 594.9, 698.1, 682.9, 783.7,786.4, 975.8}};
+		double[] musicN = new double[music.length];
+		double[][] musicN2 = new double[1][music.length];
+		for (int i = 0; i < musicN .length; i++) {	
+			musicN[i] = t.normaliza(music[i], 30, 1124.3);
+			musicN2[0][i] = t.normaliza(music2[0][i],30, 1124.3);
+		}
+		
+		// sports
+		double[] sporta = { 652.4, 751.9,855.3, 953.2, 960.4, 1172.1 };
+		double[][] sporta2 = { { 652.4, 751.9,855.3, 953.2, 960.4, 1172.1 }};
+		double[] sportaN = new double[music.length];
+		double[][] sportaN2 = new double[1][music.length];
+		for (int i = 0; i < sporta.length; i++) {	
+			sportaN[i] = t.normaliza(sporta[i], 30, 1172.1 );
+			sportaN2[0][i] = t.normaliza(sporta2[0][i], 30, 1172.1 );
+		}
+		
+		// game
+		double[] game = { 628.2, 730.8, 786.5, 889.1,869.0, 1061.2  };
+		double[][] game2 = { {628.2, 730.8, 786.5, 889.1,869.0, 1061.2 } };
+		double[] gameN = new double[music.length];
+		double[][] gameN2 = new double[1][music.length];
+		for (int i = 0; i < sporta.length; i++) {	
+			gameN[i] = t.normaliza(game[i], 30, 1124.3);
+			gameN2[0][i] = t.normaliza(game2[0][i], 30, 1124.3);
+		}
+		
+		// news
+		double[] news = { 612.3, 725.5, 802.7, 915.7,901.3, 1124.3 };
+		double[][] news2 = { { 612.3, 725.5, 802.7, 915.7,901.3, 1124.3 }};
+		double[] newsN = new double[music.length];
+		double[][] newsN2 = new double[1][music.length];
+		for (int i = 0; i < sporta.length; i++) {	
+			newsN[i] = t.normaliza(news[i], 30, 1124.3);
+			newsN2[0][i] = t.normaliza(news2[0][i], 30, 1124.3);
+		}
+		
+		teste30.all(input, input2, musicN, musicN2,"music","music EMQ",0);
+		teste30.all(input, input2, sportaN, sportaN2,"sporta","sporta EMQ",1);
+		teste30.all(input, input2, gameN, gameN2,"game","game EMQ",2);
+		teste30.all(input, input2, newsN, newsN2,"news","news EMQ",3);
+		
+		System.out.println("___________EQM__________");
+		for (int i = 0; i < values.length; i++) {
+			System.out.println("_____________________");
+			for (int j = 0; j < values[0].length; j++) {
+				System.out.print(values[i][j]+" ");
+			}
+		}
+		String names[] = new String[4];
+		names[0] = "AG Linear";
+		names[1] = "AG Exponencial";
+		names[2] = "LS Linear";
+		names[3] = "LS Exp";
+		plot2(values, names, "Métrica de Avaliação");
+	/*	String names[] = new String[4];
+		values[met][0] = rsme;
+		values[met][1] = rsme2;
+		values[met][2] = rsme3;
+		values[met][3] = rsme4;
+		namesmet] = "AG Linear";
+		names[1] = "AG Exponencial";
+		names[2] = "LS Linear";
+		names[3] = "LS Exp";
+		plot2(values, names, nome2);*/
 	}
 
 	public static void plot(double[] ampHour, double[] meanOutput, double[] meanOutput2, double[] meanOutput3,
-			double[] meanOutput4) {
+			double[] meanOutput4,String nome) {
 
 		Plot2DPanel plot = new Plot2DPanel();
-
+		
 		double x[] = new double[ampHour.length];
 		for (int i = 0; i < x.length; i++) {
 			x[i] = i + 1;
@@ -298,20 +347,24 @@ public class Teste30We {
 		plot.addLinePlot("AG Exponencial", x, meanOutput2);
 		plot.addLinePlot("LS Linear", x, meanOutput3);
 		plot.addLinePlot("LS Exp", Color.BLACK, x, meanOutput4);
-		JFrame frame = new JFrame("Output das 30 execuções");
+		JFrame frame = new JFrame(nome);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(plot);
 		frame.setSize(700, 500);
 		frame.setVisible(true);
 	}
 
-	public static void plot2(double[] value, String[] name, String titulo) {
+	public static void plot2(double[][] value, String[] name, String titulo) {
 		DefaultCategoryDataset dados = new DefaultCategoryDataset();
+		int cont= 0;
 		for (int i = 0; i < value.length; i++) {
-			dados.addValue(value[i], name[i], "");
+			for (int j = 0; j < value[0].length; j++) {
+				dados.addValue(value[i][j], cont+"", "");
+				cont++;
+			}
 		}
 
-		JFreeChart grafico = ChartFactory.createBarChart(titulo, "metodo", "Saída", dados, PlotOrientation.VERTICAL,
+		JFreeChart grafico = ChartFactory.createBarChart(titulo, "metodo", "Erro Médio Quadrático", dados, PlotOrientation.VERTICAL,
 				true, true, true);
 		CategoryPlot plot = (CategoryPlot) grafico.getPlot();
 		CategoryItemRenderer itemRerender = plot.getRenderer();
@@ -320,9 +373,24 @@ public class Teste30We {
 		itemRerender.setSeriesPaint(1, Color.GREEN);
 		itemRerender.setSeriesPaint(2, Color.YELLOW);
 		itemRerender.setSeriesPaint(3, Color.BLACK);
+		//
+		itemRerender.setSeriesPaint(4, Color.RED);
+		itemRerender.setSeriesPaint(5, Color.GREEN);
+		itemRerender.setSeriesPaint(6, Color.YELLOW);
+		itemRerender.setSeriesPaint(7, Color.BLACK);
+		//
+		itemRerender.setSeriesPaint(8, Color.RED);
+		itemRerender.setSeriesPaint(9, Color.GREEN);
+		itemRerender.setSeriesPaint(10, Color.YELLOW);
+		itemRerender.setSeriesPaint(11, Color.BLACK);
+		//
+		itemRerender.setSeriesPaint(12, Color.RED);
+		itemRerender.setSeriesPaint(13, Color.GREEN);
+		itemRerender.setSeriesPaint(14, Color.YELLOW);
+		itemRerender.setSeriesPaint(15, Color.BLACK);
+		
 		JFrame frame = new JFrame();
 		frame.add(new ChartPanel(grafico));
-
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
@@ -358,5 +426,5 @@ public class Teste30We {
 		double r = numerador / denominador;
 		return r;
 	}
-
+//mw
 }
