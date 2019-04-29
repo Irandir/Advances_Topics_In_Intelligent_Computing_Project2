@@ -1,12 +1,12 @@
-package we;
+package we.new1;
 
 import javax.swing.JFrame;
 
 import org.math.plot.Plot2DPanel;
 
-import Algoritmo_Genetico.AlgoritmoGeneticoReal;
+import pso.PSO;
 
-public class Teste2We {
+public class TestePSOExponencialWe {
 	private double[] bestIndividual = null;
 	private double bestIndFit[];
 	private double vectorOutput[];
@@ -25,7 +25,6 @@ public class Teste2We {
 		// configurations
 		// resolution, fps, taxa de bit,largura de banda
 		double[][] conf1 = {
-
 				{ 320, 240, 15, 256 }, 
 				{ 320, 240, 30, 256 }, 
 				{ 320, 240, 60, 256 },
@@ -56,12 +55,40 @@ public class Teste2We {
 				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
 			}
 		}
-		// ampere hora 
-		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490, 0.452, 0.324, 0.648, 0.378, 0.416 };
+		// ampere hora
+		double[] ampHour =  {
+
+				16.424, 17.008, 17.336, 16.854, 16.402, 15.726,
+
+				15.55, 16.452, 16.11, 16.458, 17.86, 15.612,
+
+				15.45, 16.768, 14.282, 15.854, 16.03, 16.976 };
 		
-		Teste2We t = new Teste2We();
-		t.run(conf, ampHour,20,1000);
-		for (int i = 0; i < t.bestIndFit.length; i++) {
+		double[] ampHour2 =new double[ampHour.length];
+		for (int j = 0; j < ampHour2.length; j++) {
+			ampHour2[j] = normaliza(ampHour[j], 13, 17.86);
+		}
+
+		PSO pso = new PSO(conf, ampHour2, 200, 2, 2, 1, 6, 2,1);
+		double[] output = pso.start(200); 
+		//System.out.println(output.length);
+		/*double []t30 = pso.start(200); 
+		for (int i = 0; i < 30; i++) {
+			pso = new PSO(conf, ampHour, 200, 2, 2, 1, 6, 2,1);
+			output = pso.start(200);
+			t30[i] = pso.getgBestFitness()[pso.getgBestFitness().length-1];
+		}
+		*/
+		
+		/*TestePSOExponencialWe t = new TestePSOExponencialWe();
+		double sum = 0;
+		for (int i = 0; i < t30.length; i++) {
+			System.out.println(t30[i]);
+			sum+=t30[i];
+		}
+		sum/=30;
+		System.out.println("--"+sum);*/
+		/*for (int i = 0; i < t.bestIndFit.length; i++) {
 			System.out.println(i+" "+t.bestIndFit[i]);
 		}
 		System.out.println("______________Population___________");
@@ -72,16 +99,16 @@ public class Teste2We {
 		System.out.println("----------------REsposta-----------");
 		for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
 			System.out.println("output --> "+t.vectorOutput[contAmp]+"  output D-->"+ampHour[contAmp]+" erro-->"+(t.vectorOutput[contAmp]-ampHour[contAmp]));
-		}
+		}*/
 
 		Plot2DPanel plot = new Plot2DPanel();
-		double x[] = new double[ampHour.length];
+		double x[] = new double[ampHour2.length];
 		for (int i = 0; i < x.length; i++) {
 			x[i]=i+1;			
 		}
 		
-		plot.addLinePlot("A/H", x,ampHour);
-		plot.addLinePlot("A/H", x,t.vectorOutput);
+		plot.addLinePlot("A/H", x,ampHour2);
+		plot.addLinePlot("A/H", x,output);
 		JFrame frame = new JFrame("Output Exponencial");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(plot);
@@ -89,7 +116,7 @@ public class Teste2We {
 		frame.setVisible(true);
 	}
 	
-	public void run(double[][] conf,double[] ampHour,int lengthPopulation,int geracao) {
+	/*public void run(double[][] conf,double[] ampHour,int lengthPopulation,int geracao) {
 	
 		//function expenencial
 		
@@ -146,7 +173,7 @@ public class Teste2We {
 			vectorOutput[contAmp] = output;
 		}
 		this.rsme = rsme / ampHour.length;
-	}
+	}*/
 
 	public double[] getBestIndividual() {
 		return bestIndividual;

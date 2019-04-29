@@ -1,4 +1,5 @@
-package they;
+package teste;
+
 
 import java.awt.Color;
 
@@ -9,7 +10,7 @@ import org.math.plot.Plot2DPanel;
 import Jama.Matrix;
 import teste.TesteMinimosQuadraticosExponencialWe;
 
-public class TesteMinimosQuadraticosExponencialThey2 {
+public class TesteMinimosQuadraticosExponencialWe {
 
 	private double[]p;
 	private double rsme;
@@ -103,9 +104,10 @@ public class TesteMinimosQuadraticosExponencialThey2 {
 	
 	public static void main(String[] args) {
 		double[][] conf1 = {
-				{ 320, 320, 320, 720, 720, 720, 1920, 1920, 1920 }, 
-				{ 240, 240, 240, 480, 480, 480, 1080, 1080, 1080 },
-				{ 15, 30, 60, 15, 30, 60, 15, 30, 60 }
+				{ 320, 320, 320, 320, 320, 320, 720, 720, 720, 720, 720, 720, 1920, 1920, 1920, 1920, 1920, 1920 },
+				{ 240, 240, 240, 240, 240, 240, 480, 480, 480, 480, 480, 480, 1080, 1080, 1080, 1080, 1080, 1080 },
+				{ 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60 },
+				{ 256, 256, 256, 512, 512, 512, 256, 256, 256, 512, 512, 512, 256, 256, 256, 512, 512, 512 },
 
 		};
 		double[][] conf = new double[conf1.length][conf1[0].length];
@@ -115,9 +117,9 @@ public class TesteMinimosQuadraticosExponencialThey2 {
 				conf[i][j] = normaliza(conf1[i][j], 15, 1920);
 			}
 		}
-		double[][] ampHour2 =  {{ 0.046, 0.050, 0.056, 0.052, 0.053, 0.061, 0.054, 0.064, 0.090 }};
-		
-		TesteMinimosQuadraticosExponencialThey2 t = new TesteMinimosQuadraticosExponencialThey2();
+		double[][] ampHour2 =  { { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410,
+			0.490, 0.452, 0.324, 0.648, 0.378, 0.416 } };
+		TesteMinimosQuadraticosExponencialWe t = new TesteMinimosQuadraticosExponencialWe();
 		t.run(conf, ampHour2);
 		double[] vectorOutputD = new double[ampHour2[0].length];
 		for (int i = 0; i < ampHour2[0].length; i++) {
@@ -129,7 +131,6 @@ public class TesteMinimosQuadraticosExponencialThey2 {
 		for (int i = 0; i < x.length; i++) {
 			x[i] = i + 1;
 		}
-
 		plot.addLinePlot("REAL", x, vectorOutputD);
 		plot.addLinePlot("Obtido", x, t.getVectorOutput());
 		JFrame frame = new JFrame("Least Squares Exponencial");
@@ -141,7 +142,6 @@ public class TesteMinimosQuadraticosExponencialThey2 {
 		for (int i = 0; i < t.p.length; i++) {
 			System.out.println(t.p[i]);
 		}
-		System.out.println("EMQ"+t.rsme);
 	}
 	
 	public static double[][] calcularMininoQuadratico(Matrix entradas, Matrix resposta) {

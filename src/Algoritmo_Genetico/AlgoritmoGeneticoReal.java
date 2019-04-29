@@ -6,6 +6,193 @@ import java.util.stream.DoubleStream;
 public class AlgoritmoGeneticoReal {
 
 	private Random rand = new Random();
+	
+	private double[] vectorOutput;
+	private double[] bestIndividual;
+	double[] bestIndFit;
+	
+public double startLinear(double[][] conf,double[] ampHour,int lengthPopulation,int geracao,double probCross,double probMult) {
+		
+		// function linear
+		AlgoritmoGeneticoReal ag = new AlgoritmoGeneticoReal();
+
+		double rsme = 0;// erro medio quadratico
+		double output = 0;// saida do modelo linear
+		double[] vectorRMSE = new double[lengthPopulation];// vetor dos erros
+															// medios
+															// quadraticos
+		double[][] population = ag.createPopulation(lengthPopulation, conf[0].length, -1, 1);
+		double[][] populationCruzada;
+		double[][] populationMudata;
+		double[][] populationSelection;
+		double[][] populationEletismo;
+		double[] fitness = null;
+		vectorOutput = new double[ampHour.length];
+		bestIndFit = new double[geracao];
+		for (int contGerecao = 0; contGerecao < geracao; contGerecao++) {
+			if (contGerecao > 0) {
+				populationSelection = ag.selection(fitness, population, 3);
+				populationCruzada = ag.crossoverAritmetico(populationSelection, probCross);
+				populationMudata = ag.mutacaoUniforme(populationCruzada, probMult, -1, 1);
+				populationEletismo = ag.eletismo(bestIndividual, bestIndFit[contGerecao - 1], populationMudata,
+						fitness);
+				population = populationEletismo;
+			}
+			vectorRMSE = new double[lengthPopulation];
+			for (int contPopulation = 0; contPopulation < population.length; contPopulation++) {
+				rsme = 0;
+				for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
+					output = 0;
+					for (int i = 0; i < conf[0].length; i++) {
+						output += population[contPopulation][i] * conf[contAmp][i];
+					}
+					rsme += Math.pow(ampHour[contAmp] - output, 2);
+				}
+				rsme /= ampHour.length;
+				vectorRMSE[contPopulation] = rsme;
+			}
+			fitness = ag.fitness(vectorRMSE);
+			bestIndividual = ag.bestIndividual(population, fitness);
+			bestIndFit[contGerecao] = ag.bestIndividualFit(fitness);
+		}
+		rsme = 0;
+		for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
+			output = 0;
+			for (int i = 0; i < conf[0].length; i++) {
+				output += bestIndividual[i] * conf[contAmp][i];
+			}
+			vectorOutput[contAmp] = output;
+			rsme += Math.pow(ampHour[contAmp] - output, 2);
+		}
+		rsme = rsme / ampHour.length;
+		return rsme;
+	}
+	
+public double startPotencial(double[][] conf,double[] ampHour,int lengthPopulation,int geracao,double probCross,double probMult) {
+	
+	// function linear
+	AlgoritmoGeneticoReal ag = new AlgoritmoGeneticoReal();
+
+	double rsme = 0;// erro medio quadratico
+	double output = 0;// saida do modelo linear
+	double[] vectorRMSE = new double[lengthPopulation];// vetor dos erros
+														// medios
+														// quadraticos
+	double[][] population = ag.createPopulation(lengthPopulation, conf[0].length*2, -1, 1);
+	double[][] populationCruzada;
+	double[][] populationMudata;
+	double[][] populationSelection;
+	double[][] populationEletismo;
+	double[] fitness = null;
+	vectorOutput = new double[ampHour.length];
+	bestIndFit = new double[geracao];
+	for (int contGerecao = 0; contGerecao < geracao; contGerecao++) {
+		if (contGerecao > 0) {
+			populationSelection = ag.selection(fitness, population, 3);
+			populationCruzada = ag.crossoverAritmetico(populationSelection, probCross);
+			populationMudata = ag.mutacaoUniforme(populationCruzada, probMult, -1, 1);
+			populationEletismo = ag.eletismo(bestIndividual, bestIndFit[contGerecao - 1], populationMudata,
+					fitness);
+			population = populationEletismo;
+		}
+		vectorRMSE = new double[lengthPopulation];
+		for (int contPopulation = 0; contPopulation < population.length; contPopulation++) {
+			rsme = 0;
+			for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
+				output = 0;
+				for (int i = 0; i < conf[0].length; i++) {
+					output += population[contPopulation][i] * Math.pow(conf[contAmp][i],population[contPopulation][i+conf[0].length-1]);
+				}
+				rsme += Math.pow(ampHour[contAmp] - output, 2);
+			}
+			rsme /= ampHour.length;
+			vectorRMSE[contPopulation] = rsme;
+		}
+		fitness = ag.fitness(vectorRMSE);
+		bestIndividual = ag.bestIndividual(population, fitness);
+		bestIndFit[contGerecao] = ag.bestIndividualFit(fitness);
+	}
+	rsme = 0;
+	for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
+		output = 0;
+		for (int i = 0; i < conf[0].length; i++) {
+			output += bestIndividual[i] * conf[contAmp][i];
+		}
+		vectorOutput[contAmp] = output;
+		rsme += Math.pow(ampHour[contAmp] - output, 2);
+	}
+	rsme = rsme / ampHour.length;
+	return rsme;
+}
+
+	public double startEXP(double[][] conf,double[] ampHour,int lengthPopulation,int geracao,double probCross,double probMult) {
+		
+		//function expenencial
+		
+		AlgoritmoGeneticoReal ag = new AlgoritmoGeneticoReal();
+		double rsme = 0;//erro medio quadratico
+		double exp = 0;
+		double output = 0;//saida do modelo linear
+		double[] vectorRMSE = new double[lengthPopulation];//vetor dos erros medios quadraticos 
+		double[][] population = ag.createPopulation(lengthPopulation, conf[0].length+1, -1, 1);//+1 do k
+		double[][] populationCruzada;
+		double[][] populationMudata;
+		double[][] populationSelection;
+		double[][] populationEletismo;
+		double[] fitness = null;
+		vectorOutput = new double[ampHour.length];
+		bestIndFit = new double[geracao];
+		bestIndividual = new double[1];
+
+		for (int contGerecao = 0; contGerecao < geracao; contGerecao++) {
+			if (contGerecao > 0) {
+				populationSelection = ag.selection(fitness, population, 4);
+				populationCruzada = ag.crossoverAritmetico(populationSelection, probCross);
+				populationMudata = ag.mutacaoUniforme(populationCruzada, probMult, -1, 1);
+				populationEletismo = ag.eletismo(bestIndividual, bestIndFit[contGerecao - 1], populationMudata, fitness);
+				population = populationEletismo;
+			}
+			vectorRMSE  = new double[lengthPopulation]; 
+			for (int contPopulation = 0; contPopulation < population.length; contPopulation++) {
+				rsme = 0;
+				for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
+					output = 0;
+					exp = 0;
+					for (int i = 0; i < conf[0].length; i++) {
+						exp += population[contPopulation][i]* conf[contAmp][i]; 
+					}
+					output= population[contPopulation][population[0].length-1]*(Math.exp(exp));
+					rsme += Math.pow(ampHour[contAmp]-output,2);
+				}
+				rsme/= ampHour.length;
+				vectorRMSE[contPopulation] = rsme;
+			}
+			fitness = ag.fitness(vectorRMSE);
+			bestIndividual = ag.bestIndividual(population, fitness);
+			bestIndFit[contGerecao] = ag.bestIndividualFit(fitness);
+		}	
+		rsme = 0;
+		for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
+			output = 0;
+			exp = 0;
+			for (int i = 0; i < conf[0].length; i++) {
+				exp += bestIndividual[i]* conf[contAmp][i]; 
+			}
+			output= bestIndividual[bestIndividual.length-1]*(Math.exp(exp));
+			rsme += Math.pow(ampHour[contAmp] - output, 2);
+			vectorOutput[contAmp] = output;
+		}
+		rsme = rsme / ampHour.length;
+		return rsme;
+	}
+	
+	public double[] getBestIndividual() {
+		return bestIndividual;
+	}
+
+	public void setBestIndividual(double[] bestIndividual) {
+		this.bestIndividual = bestIndividual;
+	}
 
 	public double[][]createPopulation(int lengthPopulation, int lengthGene,double min,double max) {
 		if (lengthPopulation % 2 != 0) {
@@ -145,4 +332,21 @@ public class AlgoritmoGeneticoReal {
 		double[] a = r.toArray();
 		return a[0];
 	}
+
+	public double[] getVectorOutput() {
+		return vectorOutput;
+	}
+
+	public void setVectorOutput(double[] vectorOutput) {
+		this.vectorOutput = vectorOutput;
+	}
+
+	public double[] getBestIndFit() {
+		return bestIndFit;
+	}
+
+	public void setBestIndFit(double[] bestIndFit) {
+		this.bestIndFit = bestIndFit;
+	}
+	
 }

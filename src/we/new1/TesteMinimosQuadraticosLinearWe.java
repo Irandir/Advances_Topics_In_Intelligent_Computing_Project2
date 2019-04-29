@@ -1,4 +1,4 @@
-package we;
+package we.new1;
 
 import java.awt.Color;
 
@@ -59,20 +59,31 @@ public class TesteMinimosQuadraticosLinearWe {
 			}
 		}
 		// ampere hora
-		double[][] ampHour = { { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410,
-				0.490, 0.452, 0.324, 0.648, 0.378, 0.416 } };
+		double[][] ampHour = {{
+
+			16.424, 17.008, 17.336, 16.854, 16.402, 15.726,
+
+			15.55, 16.452, 16.11, 16.458, 17.86, 15.612,
+
+			15.45, 16.768, 14.282, 15.854, 16.03, 16.976 }};
+	
+		double[][] ampHour2 = new double[1][ampHour[0].length];
+		for (int j = 0; j < ampHour2[0].length; j++) {
+			ampHour2[0][j] = normaliza(ampHour[0][j], 13, 17.86);
+		}
 
 		TesteMinimosQuadraticosLinearWe t = new TesteMinimosQuadraticosLinearWe();
-		t.run(conf, ampHour);
+		t.run(conf, ampHour2);
 		Plot2DPanel plot = new Plot2DPanel();
-		double x[] = new double[ampHour[0].length];
+		double x[] = new double[ampHour2[0].length];
 		for (int i = 0; i < x.length; i++) {
 			x[i]=i+1;			
 		}
-		double[] vectorOutputD = new double[ampHour[0].length];
-		for (int i = 0; i < ampHour[0].length; i++) {
-			vectorOutputD[i] = ampHour[0][i];
+		double[] vectorOutputD = new double[ampHour2[0].length];
+		for (int i = 0; i < ampHour2[0].length; i++) {
+			vectorOutputD[i] = ampHour2[0][i];
 		}
+		System.out.println("EMQ__>"+t.rsme);
 		plot.addLinePlot("REAL", x,vectorOutputD);
 		plot.addLinePlot("Obtido", x,t.vectorOutput);
 		JFrame frame = new JFrame("Least Squares linear");

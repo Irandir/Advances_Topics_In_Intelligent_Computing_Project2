@@ -1,4 +1,4 @@
-package they;
+package teste;
 
 import java.awt.Color;
 
@@ -8,7 +8,7 @@ import org.math.plot.Plot2DPanel;
 
 import Jama.Matrix;
 
-public class TesteMinimosQuadraticosLinearThey {
+public class TesteMinimosQuadraticosLinearWe {
 	private double[]p;
 	private double rsme;
 	private double vectorOutput[];
@@ -46,8 +46,10 @@ public class TesteMinimosQuadraticosLinearThey {
 	}
 	public static void main(String[] args) {
 		double[][] conf1 = {
-				{ 320, 320, 320, 720, 720, 720, 1920, 1920, 1920 }, { 240, 240, 240, 480, 480, 480, 1080, 1080, 1080 },
-				{ 15, 30, 60, 15, 30, 60, 15, 30, 60 },
+				{ 320, 320, 320, 320, 320, 320, 720, 720, 720, 720, 720, 720, 1920, 1920, 1920, 1920, 1920, 1920 },
+				{ 240, 240, 240, 240, 240, 240, 480, 480, 480, 480, 480, 480, 1080, 1080, 1080, 1080, 1080, 1080 },
+				{ 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60, 15, 30, 60 },
+				{ 256, 256, 256, 512, 512, 512, 256, 256, 256, 512, 512, 512, 256, 256, 256, 512, 512, 512 },
 
 		};
 		double[][] conf = new double[conf1.length][conf1[0].length];
@@ -57,9 +59,10 @@ public class TesteMinimosQuadraticosLinearThey {
 			}
 		}
 		// ampere hora
-		double[][] ampHour =  {{ 0.046, 0.050, 0.056, 0.052, 0.053, 0.061, 0.054, 0.064, 0.090 }};
+		double[][] ampHour = { { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410,
+				0.490, 0.452, 0.324, 0.648, 0.378, 0.416 } };
 
-		TesteMinimosQuadraticosLinearThey t = new TesteMinimosQuadraticosLinearThey();
+		TesteMinimosQuadraticosLinearWe t = new TesteMinimosQuadraticosLinearWe();
 		t.run(conf, ampHour);
 		Plot2DPanel plot = new Plot2DPanel();
 		double x[] = new double[ampHour[0].length];
@@ -70,7 +73,6 @@ public class TesteMinimosQuadraticosLinearThey {
 		for (int i = 0; i < ampHour[0].length; i++) {
 			vectorOutputD[i] = ampHour[0][i];
 		}
-		System.out.println("EMQ-->"+t.rsme);
 		plot.addLinePlot("REAL", x,vectorOutputD);
 		plot.addLinePlot("Obtido", x,t.vectorOutput);
 		JFrame frame = new JFrame("Least Squares linear");

@@ -1,4 +1,4 @@
-package we;
+package we.new1;
 
 import javax.swing.JFrame;
 
@@ -6,7 +6,7 @@ import org.math.plot.Plot2DPanel;
 
 import Algoritmo_Genetico.AlgoritmoGeneticoReal;
 
-public class TesteWe {
+public class TesteAlgoritmoGeneticoLinear {
 
 	private double[] bestIndividual;
 	private double[] bestIndFit;
@@ -45,34 +45,106 @@ public class TesteWe {
 			}
 		}
 		// ampere hora
-		double[] ampHour = { 0.422, 0.446, 0.522, 0.158, 0.662, 0.368, 0.630, 0.276, 0.430, 0.528, 0.450, 0.410, 0.490,
-				0.452, 0.324, 0.648, 0.378, 0.416 };
+		double[] ampHour = {
 
-		TesteWe t = new TesteWe();
-		t.run(conf, ampHour, 20, 1000);
-		double[] bestIndividual = t.bestIndividual;
+				16.424, 17.008, 17.336, 16.854, 16.402, 15.726,
+
+				15.55, 16.452, 16.11, 16.458, 17.86, 15.612,
+
+				15.45, 16.768, 14.282, 15.854, 16.03, 16.976 };
+		
+		double[] ampHour2 =new double[ampHour.length];
+		for (int j = 0; j < ampHour2.length; j++) {
+			ampHour2[j] = normaliza(ampHour[j], 13, 17.86);
+		}
+
+		AlgoritmoGeneticoReal t = new AlgoritmoGeneticoReal();
+		int cont = 0;
+		double[] pc = {0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8};
+		double[] pm = {0.01,0.03,0.05,0.1,0.3,0.5,0.7,0.8};
+		
+		String [] ps = new String[pc.length*pm.length];
+		for (int i = 0; i < pc.length; i++) {
+			for (int j = 0; j < pm.length; j++) {
+				ps[cont] = new String("cros = "+pc[i]+" mult = "+pm[j]);
+				cont++;
+			}
+			
+		}
+	
+		double[][] bestIndFit10 = new double[100][pc.length*pm.length];
+		double[] bestIndFitMedia = new double[64];
+		for (int k = 0; k < bestIndFit10.length; k++) {
+			cont = 0;
+			for (int i = 0; i < pc.length; i++) {
+				
+				for (int j = 0; j < pm.length; j++) {
+					t = new AlgoritmoGeneticoReal();
+					t.startLinear(conf, ampHour2,20,200,pc[i],pm[j]);
+					bestIndFit10[k][cont] = t.getBestIndFit()[t.getBestIndFit().length-1];
+					cont++;
+				}
+			}
+
+		}
+		
+		/*for (int i = 0; i < bestIndFit10.length; i++) {
+			for (int j = 0; j < bestIndFit10[0].length; j++) {
+				System.out.print(bestIndFit10[i][j]+" ");
+			}
+			System.out.println();
+		}*/
+		
+		
+		for (int i = 0; i < bestIndFit10[0].length; i++) {
+			for (int j = 0; j < bestIndFit10.length; j++) {
+				bestIndFitMedia[i]+= bestIndFit10[j][i];
+			}
+		}
+		double max = 0;
+		for (int i = 0; i < bestIndFitMedia.length; i++) {
+			bestIndFitMedia[i] = bestIndFitMedia[i]/bestIndFit10.length;
+			if(max<bestIndFitMedia[i]){
+				max = bestIndFitMedia[i];
+			}
+			
+		}
+		String aux ;
+		for (int i = 0; i < bestIndFitMedia.length; i++) {
+			if(max == bestIndFitMedia[i]){
+				System.out.print("--> "+" "+ps[i]+" |");
+			}
+			aux = new String(bestIndFitMedia[i]+"");
+			aux = aux.replace(".", ",");
+			System.out.println(aux);
+		}
 		System.out.println("----------------REsposta-----------");
-		for (int i = 0; i < t.vectorOutput.length; i++) {
-			System.out.println(t.vectorOutput[i] + "  " + ampHour[i]);
+		for (int contAmp = 0; contAmp < ampHour.length; contAmp++) {
+			System.out.println("output --> "+t.getVectorOutput()[contAmp]+"  output D-->"+ampHour[contAmp]+" erro-->"+(t.getVectorOutput()[contAmp]-ampHour[contAmp]));
 		}
-		System.out.println("---fitness--");
-		for (int i = 0; i < t.bestIndFit.length; i++) {
-			System.out.println(i + " " + t.bestIndFit[i]);
-		}
-		System.out.println("______________P___________");
-		for (int i = 0; i < bestIndividual.length; i++) {
-			System.out.println(bestIndividual[i]);
-		}
-		System.out.println("pcc-->" + t.pcc(t.vectorOutput,ampHour));
-		Plot2DPanel plot = new Plot2DPanel();
+
+		/*Plot2DPanel plot = new Plot2DPanel();
 		double x[] = new double[ampHour.length];
 		for (int i = 0; i < x.length; i++) {
 			x[i] = i + 1;
 		}
-
+		System.out.println("EQM__>"+t.rsme);
 		plot.addLinePlot("A/H", x, ampHour);
 		plot.addLinePlot("A/H", x, t.vectorOutput);
 		JFrame frame = new JFrame("Output Linear");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(plot);
+		frame.setSize(700, 500);
+		frame.setVisible(true);*/
+		
+		Plot2DPanel plot = new Plot2DPanel();
+		double x[] = new double[bestIndFitMedia.length];
+		for (int i = 0; i < x.length; i++) {
+			x[i]=i+1;			
+		}
+		
+		plot.addLinePlot("EMQ", x,bestIndFitMedia);
+		JFrame frame = new JFrame("Output Linear AG");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(plot);
 		frame.setSize(700, 500);
